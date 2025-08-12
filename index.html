@@ -95,14 +95,13 @@
     <div id="register-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>加入草原</h2><form id="register-form"><div class="form-group"><label>用户名</label><input type="text" id="reg-username"></div><div class="form-group"><label>密码</label><input type="password" id="reg-password"></div><div class="form-group"><label>头像 (图片链接)</label><input type="text" id="reg-avatar" placeholder="请粘贴有效的图片网址"></div><div class="form-group"><label>生日</label><div class="birthday-group"><select id="reg-birth-year"></select><select id="reg-birth-month"></select><select id="reg-birth-day"></select></div></div><button type="submit" class="form-submit-btn">立即注册</button></form></div></div>
     <div id="login-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>回到草原</h2><form id="login-form"><div class="form-group"><label>用户名</label><input type="text" id="login-username"></div><div class="form-group"><label>密码</label><input type="password" id="login-password"></div><button type="submit" class="form-submit-btn">登录</button></form></div></div>
     <div id="lottery-prompt-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>惊喜抽奖</h2><p>草原伙伴为您准备了一份抽奖大礼，您要试试看吗？</p><div class="action-buttons"><button id="lottery-confirm-btn" class="btn btn-primary">确认</button><button class="btn btn-secondary modal-close-btn">不想凑热闹</button></div></div></div>
-    <div id="lottery-wheel-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>幸运大转盘</h2><div class="wheel-container"><div class="wheel-pointer"></div><div id="lottery-wheel"><div class="prize-sector"><div class="prize-text">平果手机</div></div><div class="prize-sector"><div class="prize-text">abibas运动鞋</div></div><div class="prize-sector"><div class="prize-text">汪汪大礼包</div></div><div class="prize-sector"><div class="prize-text">任天唐游戏机</div></div><div class="prize-sector"><div class="prize-text">神秘大奖</div></div></div><button id="spin-btn">开始抽奖</button></div></div></div>
+    <div id="lottery-wheel-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>幸运大转盘</h2><div class="wheel-container"><div class="wheel-pointer"></div><div id="lottery-wheel"><div class="prize-sector"><div class="prize-text">苹果手机</div></div><div class="prize-sector"><div class="prize-text">阿迪运动鞋</div></div><div class="prize-sector"><div class="prize-text">汪汪大礼包</div></div><div class="prize-sector"><div class="prize-text">任天堂游戏机</div></div><div class="prize-sector"><div class="prize-text">神秘大奖</div></div></div><button id="spin-btn">开始抽奖</button></div></div></div>
     <div id="prize-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>恭喜中奖！</h2><p>您获得了：<strong id="prize-name" style="font-size:1.5em; color: var(--wood-brown);"></strong></p><p>奖品已放置您的个人背包里！</p></div></div>
     <div id="backpack-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>个人背包</h2><div id="backpack-list"></div></div></div>
     <div id="redeem-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>神秘大奖揭晓！</h2><p>恭喜您，您的神秘大奖是【Mystery Day】！</p><hr><div style="text-align: left; margin-top: 20px;"><h4>如何使用：</h4><p>请在以下几天选择一天，由于mystery性质，我们无法透露您当天要做什么，您在选择日期之后，请在该日期当天早晨7点准时到达【西土城】地铁站，享受【Mystery Day】！</p><h4>我需要提前准备什么：</h4><p>请您凭感觉准备【Mystery Day】需要带的东西，活动将在夜晚结束，请您自行评估。</p></div><div id="date-selection-container" class="date-selection"><h4>日期选择：</h4><button data-day="8月25日" class="btn btn-secondary">8月25日</button><button data-day="8月26日" class="btn btn-secondary">8月26日</button><button data-day="8月27日" class="btn btn-secondary">8月27日</button><button data-day="8月28日" class="btn btn-secondary">8月28日</button></div><button id="final-confirm-btn" class="form-submit-btn" style="margin-top: 20px;">确认选择</button></div></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // LeanCloud 初始化
             AV.init({
                 appId: "ERP3gC0G0Pdrnor7rSpDDIVT-gzGzoHsz",
                 appKey: "Gj5IaBMkgKj0uQ4RvejArDXu",
@@ -110,100 +109,15 @@
             });
 
             // --- 全局元素获取 ---
-            const authContainer = document.getElementById('auth-container');
-            const userInfoContainer = document.getElementById('user-info-container');
-            const greetingSpan = document.querySelector('.user-info .greeting');
-            const logoutBtn = document.getElementById('logout-btn');
-            const registerForm = document.getElementById('register-form');
-            const loginForm = document.getElementById('login-form');
-            const specialEventSection = document.getElementById('special-event-section');
-            const eventConfirmBtn = document.getElementById('event-confirm-btn');
-            const eventDeclineBtn = document.getElementById('event-decline-btn');
-            const commentInput = document.getElementById('comment-input');
-            const postButton = document.getElementById('post-comment-btn');
-            const commentList = document.getElementById('comment-list');
-            const backpackBtn = document.getElementById('backpack-btn');
-            const backpackModal = document.getElementById('backpack-modal');
-            const backpackList = document.getElementById('backpack-list');
-            const redeemModal = document.getElementById('redeem-modal');
-            const dateSelectionContainer = document.getElementById('date-selection-container');
-            const finalConfirmBtn = document.getElementById('final-confirm-btn');
-            const lotteryConfirmBtn = document.getElementById('lottery-confirm-btn');
-            const lotteryWheelModal = document.getElementById('lottery-wheel-modal');
-            const spinBtn = document.getElementById('spin-btn');
-            const lotteryWheel = document.getElementById('lottery-wheel');
-            const prizeModal = document.getElementById('prize-modal');
-            const registerBtn = document.getElementById('register-btn');
-            const loginBtn = document.getElementById('login-btn');
+            const authContainer = document.getElementById('auth-container'), userInfoContainer = document.getElementById('user-info-container'), greetingSpan = document.querySelector('.user-info .greeting'), logoutBtn = document.getElementById('logout-btn'), registerForm = document.getElementById('register-form'), loginForm = document.getElementById('login-form'), specialEventSection = document.getElementById('special-event-section'), eventConfirmBtn = document.getElementById('event-confirm-btn'), eventDeclineBtn = document.getElementById('event-decline-btn'), commentInput = document.getElementById('comment-input'), postButton = document.getElementById('post-comment-btn'), commentList = document.getElementById('comment-list'), backpackBtn = document.getElementById('backpack-btn'), backpackModal = document.getElementById('backpack-modal'), backpackList = document.getElementById('backpack-list'), redeemModal = document.getElementById('redeem-modal'), dateSelectionContainer = document.getElementById('date-selection-container'), finalConfirmBtn = document.getElementById('final-confirm-btn'), lotteryConfirmBtn = document.getElementById('lottery-confirm-btn'), lotteryWheelModal = document.getElementById('lottery-wheel-modal'), spinBtn = document.getElementById('spin-btn'), lotteryWheel = document.getElementById('lottery-wheel'), prizeModal = document.getElementById('prize-modal'), registerBtn = document.getElementById('register-btn'), loginBtn = document.getElementById('login-btn');
             let selectedDate = null;
 
             // --- 核心功能函数 ---
-            const updateNavUI = (user) => {
-                if (user) {
-                    authContainer.style.display = 'none';
-                    userInfoContainer.style.display = 'flex';
-                    greetingSpan.textContent = `你好, ${user.get('username')}`;
-                } else {
-                    authContainer.style.display = 'flex';
-                    userInfoContainer.style.display = 'none';
-                }
-            };
-
-            const formatTime = (date) => {
-                const now = new Date(); const diff = now - date; const minutes = Math.floor(diff / 60000);
-                if (minutes < 1) return '刚刚'; if (minutes < 60) return `${minutes}分钟前`;
-                const hours = Math.floor(minutes / 60); if (hours < 24) return `${hours}小时前`;
-                return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-            };
-
-            const loadComments = () => {
-                commentList.innerHTML = '<p>正在加载评论...</p>';
-                const query = new AV.Query('Comment');
-                query.descending('createdAt');
-                query.find().then((comments) => {
-                    commentList.innerHTML = '';
-                    if (comments.length === 0) {
-                        commentList.innerHTML = '<p>还没有人留下足迹哦~</p>';
-                        return;
-                    }
-                    comments.forEach((c) => {
-                        const div = document.createElement('div');
-                        div.className = 'comment';
-                        div.innerHTML = `<img src="${c.get('authorAvatar') || 'https://i.pravatar.cc/150?u=guest'}" class="comment-avatar"><div class="comment-content"><div class="comment-header"><span class="comment-author">${c.get('authorName')}</span><span class="comment-time">${formatTime(c.createdAt)}</span></div><p class="comment-text">${c.get('content')}</p></div>`;
-                        commentList.appendChild(div);
-                    });
-                }).catch(error => {
-                    commentList.innerHTML = '<p>评论加载失败...</p>';
-                });
-            };
-
-            const calculateAndShowBirthdayEvent = (user) => {
-                const b = user.get('birthday'); if (!b) return;
-                const t = new Date(); t.setHours(0, 0, 0, 0);
-                const bM = b.getMonth(), bD = b.getDate();
-                let nB = new Date(t.getFullYear(), bM, bD);
-                if (nB < t) { nB.setFullYear(t.getFullYear() + 1); }
-                const dD = Math.ceil((nB - t) / 864e5);
-                document.getElementById('event-username').textContent = user.get('username');
-                document.getElementById('birthday-countdown').textContent = dD;
-                specialEventSection.style.display = 'flex';
-            };
-
-            const initializePage = () => {
-                const currentUser = AV.User.current();
-                updateNavUI(currentUser);
-                loadComments();
-                if (currentUser) {
-                    currentUser.fetch().then(latestUser => {
-                        updateNavUI(latestUser); // 更新UI以防万一
-                        if (latestUser.get('hasSpunLottery')) {
-                            specialEventSection.style.display = 'none';
-                        } else {
-                            calculateAndShowBirthdayEvent(latestUser);
-                        }
-                    }).catch(error => console.error("获取最新用户信息失败:", error));
-                }
-            };
+            const updateNavUI = (user) => { if (user) { authContainer.style.display = 'none'; userInfoContainer.style.display = 'flex'; greetingSpan.textContent = `你好, ${user.get('username')}`; } else { authContainer.style.display = 'flex'; userInfoContainer.style.display = 'none'; } };
+            const formatTime = (date) => { const now = new Date(); const diff = now - date; const minutes = Math.floor(diff / 60000); if (minutes < 1) return '刚刚'; if (minutes < 60) return `${minutes}分钟前`; const hours = Math.floor(minutes / 60); if (hours < 24) return `${hours}小时前`; return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`; };
+            const loadComments = () => { commentList.innerHTML = '<p>正在加载评论...</p>'; const query = new AV.Query('Comment'); query.descending('createdAt'); query.find().then((comments) => { commentList.innerHTML = ''; if (comments.length === 0) { commentList.innerHTML = '<p>还没有人留下足迹哦~</p>'; return; } comments.forEach((c) => { const div = document.createElement('div'); div.className = 'comment'; div.innerHTML = `<img src="${c.get('authorAvatar') || 'https://i.pravatar.cc/150?u=guest'}" class="comment-avatar"><div class="comment-content"><div class="comment-header"><span class="comment-author">${c.get('authorName')}</span><span class="comment-time">${formatTime(c.createdAt)}</span></div><p class="comment-text">${c.get('content')}</p></div>`; commentList.appendChild(div); }); }).catch(error => { commentList.innerHTML = '<p>评论加载失败...</p>'; }); };
+            const calculateAndShowBirthdayEvent = (user) => { const b = user.get('birthday'); if (!b) return; const t = new Date(); t.setHours(0, 0, 0, 0); const bM = b.getMonth(), bD = b.getDate(); let nB = new Date(t.getFullYear(), bM, bD); if (nB < t) { nB.setFullYear(t.getFullYear() + 1); } const dD = Math.ceil((nB - t) / 864e5); document.getElementById('event-username').textContent = user.get('username'); document.getElementById('birthday-countdown').textContent = dD; specialEventSection.style.display = 'flex'; };
+            const initializePage = () => { const currentUser = AV.User.current(); updateNavUI(currentUser); loadComments(); if (currentUser) { currentUser.fetch().then(latestUser => { updateNavUI(latestUser); if (latestUser.get('hasSpunLottery')) { specialEventSection.style.display = 'none'; } else { calculateAndShowBirthdayEvent(latestUser); } }).catch(error => console.error("获取最新用户信息失败:", error)); } };
 
             // --- 事件监听器 ---
             registerForm.addEventListener('submit', (e) => { e.preventDefault(); const u = document.getElementById('reg-username').value.trim(), p = document.getElementById('reg-password').value.trim(), a = document.getElementById('reg-avatar').value.trim(); if (!u || !p || !a) { alert('所有信息均为必填项！'); return; } const y = document.getElementById('reg-birth-year').value, m = document.getElementById('reg-birth-month').value, d = document.getElementById('reg-birth-day').value, b = new Date(y, m - 1, d); const user = new AV.User(); user.setUsername(u); user.setPassword(p); user.set('birthday', b); user.set('avatar', a); user.signUp().then(() => { alert('注册成功!'); location.reload(); }, (err) => alert('注册失败: ' + err.message)); });
@@ -220,8 +134,8 @@
             
             // --- 弹窗通用逻辑 ---
             const allModals = document.querySelectorAll('.modal-overlay'); const allCloseBtns = document.querySelectorAll('.modal-close-btn');
-            const openModal = (modal) => modal.style.display = 'block';
-            const closeModal = (modal) => modal.style.display = 'none';
+            const openModal = (modal) => { if(modal) modal.style.display = 'block'; };
+            const closeModal = (modal) => { if(modal) modal.style.display = 'none'; };
             registerBtn.addEventListener('click', () => openModal(document.getElementById('register-modal')));
             loginBtn.addEventListener('click', () => openModal(document.getElementById('login-modal')));
             allCloseBtns.forEach(btn => btn.addEventListener('click', (e) => e.target.closest('.modal-overlay').style.display = 'none' ));
