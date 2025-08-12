@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>午后の草原散步</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 全局样式设定 --- */
+        :root {
+            --meadow-green: #A8D8B0;
+            --sky-blue: #BDE0FE;
+            --paper-white: #F8F7F3;
+            --wood-brown: #D4A373;
+            --sunshine-yellow: #FFE898;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+            background: linear-gradient(to bottom, var(--sky-blue) 0%, #d4eaff 40%, var(--meadow-green) 40%, var(--meadow-green) 100%);
+            color: #333;
+            overflow-x: hidden; /* 防止横向滚动 */
+        }
+
+        /* --- 顶部导航栏 --- */
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 25px;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.2rem
