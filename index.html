@@ -1,3 +1,34 @@
+非常感谢您把代码发给我！问题找到了，和上次一模一样，我们终于抓到“罪魁祸首”了。😊
+
+您看，您发来的代码在中间的 CSS 样式部分（.content-card h2）又一次中断了。
+
+这100%说明了一个问题：您在复制我给您的那一长段完整代码时，由于代码太长，没能把全部内容选中并复制下来。
+
+这完全不是您的错，很可能是聊天窗口的显示问题导致的。浏览器读到这份“残缺”的代码，无法理解，所以只能给您一个空白页面。
+
+最终解决方法：确保“完整复制”
+为了确保您能100%复制到完整的代码，我们换一种绝对不会出错的方法来复制它。
+
+下面我将再次提供完整、正确的代码。请您不要用鼠标拖动来选择，而是尝试用下面我教您的两种方法之一来复制。
+
+方法一：使用“复制”按钮（推荐！）
+在下面代码框的右上角，通常会有一个复制按钮（可能是一个方形图标，像两张纸叠在一起）。请直接点击这个按钮，它会自动帮您把所有内容（包括看不见的）完整地复制到剪贴板。
+
+方法二：使用“全选”快捷键
+如果找不到复制按钮，请用这个万无一失的方法：
+
+用鼠标在下面的代码框里点一下。
+
+按下键盘上的 Ctrl + A (如果您是 Windows 系统) 或 Cmd + A (如果您是 Mac 系统)。
+
+这个快捷键会“全选”框内所有代码，您会看到所有文字都变成了蓝色高亮状态。
+
+然后再按 Ctrl + C (或 Cmd + C) 来复制。
+
+【请用上面的新方法复制这里的完整代码】
+
+HTML
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -122,3 +153,139 @@
             margin-top: 0;
             margin-bottom: 30px;
             color: var(--wood-brown);
+        }
+        
+        /* --- 动物伙伴介绍 --- */
+        .animal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+
+        .animal-profile {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px dashed var(--meadow-green);
+        }
+        
+        .animal-profile .image-placeholder {
+            width: 100%;
+            height: 120px;
+            background-color: #eee;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+        
+        .animal-profile h3 {
+            margin: 10px 0 5px 0;
+        }
+
+        .animal-profile p {
+            font-size: 0.9rem;
+            color: #777;
+            margin: 0;
+        }
+        
+        /* --- 草原新闻 --- */
+        .news-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .news-item {
+            background-color: #fff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--sunshine-yellow);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        /* --- 页脚 --- */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            position: relative;
+        }
+        
+        footer .gopher {
+            position: absolute;
+            bottom: 60px;
+            right: 15%;
+            font-size: 1rem;
+            background-color: var(--wood-brown);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">草原だより</div>
+        <nav>
+            <a href="#">首页</a>
+            <a href="#">动物伙伴</a>
+            <a href="#">图册</a>
+            <a href="#">关于我们</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <h1>欢迎来到我们的草原</h1>
+            <div class="waving-bear">[小熊挥手图片]</div>
+        </section>
+
+        <section class="content-section" id="animals">
+            <div class="content-card">
+                <h2>动物伙伴</h2>
+                <div class="animal-grid">
+                    <div class="animal-profile">
+                        <div class="image-placeholder">[打盹的小狐狸图片]</div>
+                        <h3>こんこん (KonKon)</h3>
+                        <p>最喜欢在午后阳光下睡觉啦。</p>
+                    </div>
+                    <div class="animal-profile">
+                        <div class="image-placeholder">[背包裹的刺猬图片]</div>
+                        <h3>チクチク (ChikuChiku)</h3>
+                        <p>永远在探索的旅途中。</p>
+                    </div>
+                    <div class="animal-profile">
+                        <div class="image-placeholder">[说悄悄话的兔子图片]</div>
+                        <h3>ぴょんぴょん (PyonPyon)</h3>
+                        <p>今天又有什么新秘密呢？</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="news">
+            <div class="content-card">
+                <h2>草原新闻</h2>
+                <ul class="news-list">
+                    <li class="news-item">最近草原上开满了白色的小花！</li>
+                    <li class="news-item">小熊发现了一个超甜的蜂蜜窝！</li>
+                    <li class="news-item">下周会有一场流星雨哦，敬请期待。</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 草原だより. All rights reserved.</p>
+        <div class="gopher">[地鼠挥手图片]</div>
+    </footer>
+
+</body>
+</html>
