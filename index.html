@@ -1,33 +1,3 @@
-非常感谢您把代码发给我！问题找到了，和上次一模一样，我们终于抓到“罪魁祸首”了。😊
-
-您看，您发来的代码在中间的 CSS 样式部分（.content-card h2）又一次中断了。
-
-这100%说明了一个问题：您在复制我给您的那一长段完整代码时，由于代码太长，没能把全部内容选中并复制下来。
-
-这完全不是您的错，很可能是聊天窗口的显示问题导致的。浏览器读到这份“残缺”的代码，无法理解，所以只能给您一个空白页面。
-
-最终解决方法：确保“完整复制”
-为了确保您能100%复制到完整的代码，我们换一种绝对不会出错的方法来复制它。
-
-下面我将再次提供完整、正确的代码。请您不要用鼠标拖动来选择，而是尝试用下面我教您的两种方法之一来复制。
-
-方法一：使用“复制”按钮（推荐！）
-在下面代码框的右上角，通常会有一个复制按钮（可能是一个方形图标，像两张纸叠在一起）。请直接点击这个按钮，它会自动帮您把所有内容（包括看不见的）完整地复制到剪贴板。
-
-方法二：使用“全选”快捷键
-如果找不到复制按钮，请用这个万无一失的方法：
-
-用鼠标在下面的代码框里点一下。
-
-按下键盘上的 Ctrl + A (如果您是 Windows 系统) 或 Cmd + A (如果您是 Mac 系统)。
-
-这个快捷键会“全选”框内所有代码，您会看到所有文字都变成了蓝色高亮状态。
-
-然后再按 Ctrl + C (或 Cmd + C) 来复制。
-
-【请用上面的新方法复制这里的完整代码】
-
-HTML
 
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -38,254 +8,176 @@ HTML
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>
 
     <style>
-        /* --- 全局样式设定 --- */
-        :root {
-            --meadow-green: #A8D8B0;
-            --sky-blue: #BDE0FE;
-            --paper-white: #F8F7F3;
-            --wood-brown: #D4A373;
-            --sunshine-yellow: #FFE898;
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
-            background: linear-gradient(to bottom, var(--sky-blue) 0%, #d4eaff 40%, var(--meadow-green) 40%, var(--meadow-green) 100%);
-            color: #333;
-            overflow-x: hidden; /* 防止横向滚动 */
-        }
-
-        /* --- 顶部导航栏 --- */
-        header {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 900px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 25px;
-            background-color: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            z-index: 100;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .logo {
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--wood-brown);
-        }
-        
-        nav a {
-            text-decoration: none;
-            color: #555;
-            margin-left: 25px;
-            font-weight: 700;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: var(--wood-brown);
-        }
-
-        /* --- 主要内容区域 --- */
-        main {
-            padding-top: 100px; /* 为固定的导航栏留出空间 */
-        }
-
-        /* --- 主视觉区域 --- */
-        .hero-section {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 50vh;
-            text-align: center;
-            position: relative;
-        }
-
-        .hero-section h1 {
-            font-size: 3rem;
-            color: white;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
-            margin: 0;
-        }
-        
-        .hero-section .waving-bear {
-            position: absolute;
-            bottom: -50px;
-            left: 10%;
-            font-size: 1.2rem;
-            background-color: var(--wood-brown);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-        }
-
-        /* --- 内容卡片通用样式 --- */
-        .content-section {
-            padding: 80px 5%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .content-card {
-            background-color: var(--paper-white);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 800px;
-            border: 1px solid white;
-        }
-
-        .content-card h2 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 30px;
-            color: var(--wood-brown);
-        }
-        
-        /* --- 动物伙伴介绍 --- */
-        .animal-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            text-align: center;
-        }
-
-        .animal-profile {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px dashed var(--meadow-green);
-        }
-        
-        .animal-profile .image-placeholder {
-            width: 100%;
-            height: 120px;
-            background-color: #eee;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #aaa;
-            margin-bottom: 15px;
-        }
-        
-        .animal-profile h3 {
-            margin: 10px 0 5px 0;
-        }
-
-        .animal-profile p {
-            font-size: 0.9rem;
-            color: #777;
-            margin: 0;
-        }
-        
-        /* --- 草原新闻 --- */
-        .news-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .news-item {
-            background-color: #fff;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border-left: 5px solid var(--sunshine-yellow);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        /* --- 页脚 --- */
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(255, 255, 255, 0.8);
-            position: relative;
-        }
-        
-        footer .gopher {
-            position: absolute;
-            bottom: 60px;
-            right: 15%;
-            font-size: 1rem;
-            background-color: var(--wood-brown);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 10px;
-        }
-
+        :root { --meadow-green: #A8D8B0; --sky-blue: #BDE0FE; --paper-white: #F8F7F3; --wood-brown: #D4A373; --sunshine-yellow: #FFE898; }
+        body, html { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif; background: linear-gradient(to bottom, var(--sky-blue) 0%, #d4eaff 40%, var(--meadow-green) 40%, var(--meadow-green) 100%); color: #333; overflow-x: hidden; }
+        header { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 900px; display: flex; justify-content: space-between; align-items: center; padding: 10px 25px; background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border-radius: 50px; z-index: 100; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .logo { font-weight: 700; font-size: 1.2rem; color: var(--wood-brown); }
+        .nav-right { display: flex; align-items: center; }
+        nav a { text-decoration: none; color: #555; margin-left: 25px; font-weight: 700; transition: color 0.3s; }
+        nav a:hover { color: var(--wood-brown); }
+        .auth-button { margin-left: 15px; padding: 8px 18px; border: 2px solid var(--wood-brown); border-radius: 20px; background-color: transparent; color: var(--wood-brown); font-weight: 700; cursor: pointer; transition: all 0.3s; }
+        .auth-button.login { background-color: var(--wood-brown); color: white; }
+        .auth-button:hover { opacity: 0.8; }
+        main { padding-top: 100px; }
+        .hero-section { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 50vh; text-align: center; position: relative; }
+        .hero-section h1 { font-size: 3rem; color: white; text-shadow: 2px 2px 8px rgba(0,0,0,0.2); margin: 0; }
+        .hero-section .waving-bear { position: absolute; bottom: -50px; left: 10%; font-size: 1.2rem; background-color: var(--wood-brown); color: white; padding: 10px 15px; border-radius: 10px; }
+        .content-section { padding: 80px 5%; display: flex; flex-direction: column; align-items: center; }
+        .content-card { background-color: var(--paper-white); padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); width: 100%; max-width: 800px; border: 1px solid white; }
+        .content-card h2 { text-align: center; margin-top: 0; margin-bottom: 30px; color: var(--wood-brown); }
+        .animal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; text-align: center; }
+        .animal-profile { background-color: #fff; padding: 20px; border-radius: 15px; border: 2px dashed var(--meadow-green); }
+        .animal-profile .image-placeholder { width: 100%; height: 120px; background-color: #eee; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #aaa; margin-bottom: 15px; }
+        .animal-profile h3 { margin: 10px 0 5px 0; }
+        .animal-profile p { font-size: 0.9rem; color: #777; margin: 0; }
+        .comment { background-color: #fff; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #eee; }
+        .comment-author { font-weight: 700; color: var(--wood-brown); margin-bottom: 5px; }
+        .comment-text { color: #555; }
+        .comment-form textarea { width: 100%; height: 80px; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; box-sizing: border-box; margin-bottom: 10px; resize: vertical; }
+        .comment-form button { display: block; margin-left: auto; padding: 10px 25px; border: none; background-color: var(--wood-brown); color: white; border-radius: 20px; font-weight: 700; cursor: pointer; transition: background-color 0.3s; }
+        .comment-form button:hover { background-color: #c48f5a; }
+        footer { text-align: center; padding: 40px 20px; color: rgba(255, 255, 255, 0.8); position: relative; }
+        footer .gopher { position: absolute; bottom: 60px; right: 15%; font-size: 1rem; background-color: var(--wood-brown); color: white; padding: 5px 10px; border-radius: 10px; }
+        .modal-overlay { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { position: fixed; z-index: 201; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: var(--paper-white); padding: 20px 40px 40px 40px; border-radius: 20px; width: 90%; max-width: 400px; }
+        .modal-close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-close-btn:hover { color: #000; }
+        .modal-content h2 { margin-bottom: 25px; color: var(--wood-brown); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 700; color: #555; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
+        .form-submit-btn { width: 100%; padding: 12px; border: none; background-color: var(--wood-brown); color: white; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">草原だより</div>
-        <nav>
-            <a href="#">首页</a>
-            <a href="#">动物伙伴</a>
-            <a href="#">图册</a>
-            <a href="#">关于我们</a>
-        </nav>
+        <div class="nav-right">
+            <nav><a href="#">首页</a><a href="#">动物伙伴</a><a href="#">图册</a></nav>
+            <button id="register-btn" class="auth-button">注册</button>
+            <button id="login-btn" class="auth-button login">登录</button>
+        </div>
     </header>
-
     <main>
-        <section class="hero-section">
-            <h1>欢迎来到我们的草原</h1>
-            <div class="waving-bear">[小熊挥手图片]</div>
-        </section>
-
+        <section class="hero-section"><h1>欢迎来到我们的草原</h1><div class="waving-bear">[小熊挥手图片]</div></section>
         <section class="content-section" id="animals">
             <div class="content-card">
                 <h2>动物伙伴</h2>
                 <div class="animal-grid">
-                    <div class="animal-profile">
-                        <div class="image-placeholder">[打盹的小狐狸图片]</div>
-                        <h3>こんこん (KonKon)</h3>
-                        <p>最喜欢在午后阳光下睡觉啦。</p>
-                    </div>
-                    <div class="animal-profile">
-                        <div class="image-placeholder">[背包裹的刺猬图片]</div>
-                        <h3>チクチク (ChikuChiku)</h3>
-                        <p>永远在探索的旅途中。</p>
-                    </div>
-                    <div class="animal-profile">
-                        <div class="image-placeholder">[说悄悄话的兔子图片]</div>
-                        <h3>ぴょんぴょん (PyonPyon)</h3>
-                        <p>今天又有什么新秘密呢？</p>
-                    </div>
+                     <div class="animal-profile"><div class="image-placeholder">[打盹的小狐狸图片]</div><h3>こんこん (KonKon)</h3><p>最喜欢在午后阳光下睡觉啦。</p></div>
+                    <div class="animal-profile"><div class="image-placeholder">[背包裹的刺猬图片]</div><h3>チクチク (ChikuChiku)</h3><p>永远在探索的旅途中。</p></div>
+                    <div class="animal-profile"><div class="image-placeholder">[说悄悄话的兔子图片]</div><h3>ぴょんぴょん (PyonPyon)</h3><p>今天又有什么新秘密呢？</p></div>
                 </div>
             </div>
         </section>
-
-        <section class="content-section" id="news">
+        <section class="content-section" id="comments">
             <div class="content-card">
-                <h2>草原新闻</h2>
-                <ul class="news-list">
-                    <li class="news-item">最近草原上开满了白色的小花！</li>
-                    <li class="news-item">小熊发现了一个超甜的蜂蜜窝！</li>
-                    <li class="news-item">下周会有一场流星雨哦，敬请期待。</li>
-                </ul>
+                <h2>分享你的想法</h2>
+                <div id="comment-list" class="comment-list"></div>
+                <hr style="margin: 30px 0; border: 1px solid #eee;">
+                <div class="comment-form">
+                    <textarea id="comment-input" placeholder="留下你的足迹吧..."></textarea>
+                    <button id="post-comment-btn">发表评论</button>
+                </div>
             </div>
         </section>
     </main>
-
     <footer>
         <p>© 2025 草原だより. All rights reserved.</p>
         <div class="gopher">[地鼠挥手图片]</div>
     </footer>
+    <div id="register-modal" class="modal-overlay"><div class="modal-content"><span id="close-register-modal-btn" class="modal-close-btn">&times;</span><h2>加入草原</h2><form id="register-form"><div class="form-group"><label for="reg-username">用户名</label><input type="text" id="reg-username" required></div><div class="form-group"><label for="reg-password">密码</label><input type="password" id="reg-password" required></div><div class="form-group"><label for="reg-avatar">头像 (图片链接)</label><input type="text" id="reg-avatar"></div><button type="submit" class="form-submit-btn">立即注册</button></form></div></div>
+    <div id="login-modal" class="modal-overlay"><div class="modal-content"><span id="close-login-modal-btn" class="modal-close-btn">&times;</span><h2>回到草原</h2><form id="login-form"><div class="form-group"><label for="login-username">用户名</label><input type="text" id="login-username" required></div><div class="form-group"><label for="login-password">密码</label><input type="password" id="login-password" required></div><button type="submit" class="form-submit-btn">登录</button></form></div></div>
+
+    <script>
+        // 1. 初始化和云端厨房的连接 (已填写完毕!)
+        AV.init({
+            appId: "ERP3gC0G0Pdrnor7rSpDDIVT-gzGzoHsz",
+            appKey: "Gj5IaBMkgKj0uQ4RvejArDXu",
+            serverURL: "https://erp3gc0g.lc-cn-n1-shared.com"
+        });
+
+        // --- 评论区功能 (已连接云端) ---
+        const postButton = document.getElementById('post-comment-btn');
+        const commentInput = document.getElementById('comment-input');
+        const commentList = document.getElementById('comment-list');
+
+        // 功能一：发表评论并保存到云端
+        postButton.addEventListener('click', function() {
+            const commentText = commentInput.value;
+            if (!commentText.trim()) {
+                alert('评论内容不能为空哦！');
+                return;
+            }
+            const Comment = AV.Object.extend('Comment');
+            const comment = new Comment();
+            comment.set('content', commentText); 
+            comment.set('author', '游客');
+            comment.save().then((savedComment) => {
+                alert('评论发表成功！');
+                commentInput.value = '';
+                loadComments();
+            }, (error) => {
+                alert('评论发表失败，请稍后重试。');
+                console.error(error);
+            });
+        });
+
+        // 功能二：从云端读取评论并显示在页面上
+        function loadComments() {
+            commentList.innerHTML = '正在加载评论...';
+            const query = new AV.Query('Comment');
+            query.descending('createdAt');
+            query.find().then((comments) => {
+                commentList.innerHTML = '';
+                comments.forEach((comment) => {
+                    const content = comment.get('content');
+                    const author = comment.get('author');
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'comment';
+                    commentDiv.innerHTML = `<div class="comment-author">${author}</div><div class="comment-text">${content}</div>`;
+                    commentList.appendChild(commentDiv);
+                });
+            }, (error) => {
+                alert('评论加载失败！');
+                console.error(error);
+            });
+        }
+        
+        loadComments(); // 页面一打开，就自动加载一次评论
+
+        // --- 弹窗功能 ---
+        const registerBtn = document.getElementById('register-btn');
+        const loginBtn = document.getElementById('login-btn');
+        const registerModal = document.getElementById('register-modal');
+        const loginModal = document.getElementById('login-modal');
+        const closeRegisterModalBtn = document.getElementById('close-register-modal-btn');
+        const closeLoginModalBtn = document.getElementById('close-login-modal-btn');
+        const registerForm = document.getElementById('register-form');
+        function openModal(modal) { modal.style.display = 'block'; }
+        function closeModal(modal) { modal.style.display = 'none'; }
+        registerBtn.addEventListener('click', () => openModal(registerModal));
+        loginBtn.addEventListener('click', () => openModal(loginModal));
+        closeRegisterModalBtn.addEventListener('click', () => closeModal(registerModal));
+        closeLoginModalBtn.addEventListener('click', () => closeModal(loginModal));
+        window.addEventListener('click', (event) => {
+            if (event.target == registerModal) closeModal(registerModal);
+            if (event.target == loginModal) closeModal(loginModal);
+        });
+        registerForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const avatar = document.getElementById('reg-avatar').value;
+            alert('注册信息已获取！(下一步我们将实现真正的注册功能)\n用户名：' + username);
+            closeModal(registerModal);
+        });
+    </script>
 
 </body>
 </html>
