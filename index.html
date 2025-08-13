@@ -125,26 +125,21 @@
             const loadComments = () => { commentList.innerHTML = '<p>正在加载评论...</p>'; const query = new AV.Query('Comment'); query.descending('createdAt'); query.find().then((comments) => { commentList.innerHTML = ''; if (comments.length === 0) { commentList.innerHTML = '<p>还没有人留下足迹哦~</p>'; return; } comments.forEach((c) => { const div = document.createElement('div'); div.className = 'comment'; div.innerHTML = `<img src="${c.get('authorAvatar') || 'https://i.pravatar.cc/150?u=guest'}" class="comment-avatar"><div class="comment-content"><div class="comment-header"><span class="comment-author">${c.get('authorName')}</span><span class="comment-time">${formatTime(c.createdAt)}</span></div><p class="comment-text">${c.get('content')}</p></div>`; commentList.appendChild(div); }); }).catch(error => { commentList.innerHTML = '<p>评论加载失败...</p>'; }); };
             const calculateAndShowBirthdayEvent = (user) => { const b = user.get('birthday'); if (!b) return; const t = new Date(); t.setHours(0, 0, 0, 0); const bM = b.getMonth(), bD = b.getDate(); let nB = new Date(t.getFullYear(), bM, bD); if (nB < t) { nB.setFullYear(t.getFullYear() + 1); } const dD = Math.ceil((nB - t) / 864e5); document.getElementById('event-username').textContent = user.get('username'); document.getElementById('birthday-countdown').textContent = dD; specialEventSection.style.display = 'flex'; };
             
-            // ✨ [最终修复] 页面加载逻辑，增加永久性检查
             const initializePage = async () => {
                 const currentUser = AV.User.current();
                 updateNavUI(currentUser);
                 loadComments();
 
                 if (currentUser) {
-                    // 先检查服务器上是否已有参与记录
                     const query = new AV.Query('LotteryParticipation');
                     query.equalTo('user', currentUser);
                     const participation = await query.first();
 
                     if (participation) {
-                        // 如果服务器上有记录，说明永久参加过了
                         specialEventSection.style.display = 'none';
-                        // 同时在浏览器里也做个标记
                         sessionStorage.setItem('hasSpunLottery', 'true');
                         sessionStorage.setItem('hasWonPrize', '神秘大奖');
                     } else {
-                        // 服务器上没有记录，才显示生日活动
                         calculateAndShowBirthdayEvent(currentUser);
                     }
                 }
@@ -184,7 +179,6 @@
             lotteryConfirmBtn.addEventListener('click', () => { closeModal(lotteryPromptModal); openModal(lotteryWheelModal); });
             lotteryDeclineBtn.addEventListener('click', () => closeModal(lotteryPromptModal));
             
-            // ✨ [最终修复] 抽奖逻辑，增加永久性记录
             startLotteryBtn.addEventListener('click', () => {
                 startLotteryBtn.disabled = true;
                 const user = AV.User.current();
@@ -203,18 +197,14 @@
                     if (loops >= totalLoops && currentIndex === targetIndex) {
                         clearInterval(interval);
                         setTimeout(() => {
-                            // 在浏览器做临时标记
                             sessionStorage.setItem('hasWonPrize', '神秘大奖');
                             sessionStorage.setItem('hasSpunLottery', 'true');
                             
-                            // 在后台创建永久参与记录
                             const Participation = AV.Object.extend('LotteryParticipation');
                             const participation = new Participation();
                             participation.set('user', user);
                             participation.set('username', user.get('username'));
-                            participation.save().then(() => {
-                                console.log('参与记录已永久保存！');
-                            });
+                            participation.save().then(() => { console.log('参与记录已永久保存！'); });
 
                             document.getElementById('prize-name').textContent = '神秘大奖';
                             closeModal(lotteryWheelModal);
@@ -230,28 +220,38 @@
                 }, 150);
             });
 
-            backpackBtn.addEventListener('click', () => {
-                const prizeInSession = sessionStorage.getItem('hasWonPrize');
-                const dayInSession = sessionStorage.getItem('chosenDay');
+            // ✨ [最终修复] 背包逻辑，增加永久性检查
+            backpackBtn.addEventListener('click', async () => {
+                const user = AV.User.current();
+                if (!user) { alert('请先登录哦！'); return; }
                 
+                const prizeInSession = sessionStorage.getItem('hasWonPrize');
                 backpackList.innerHTML = '';
 
-                if (prizeInSession) {
+                // 优先检查后台是否已有日期选择
+                const dateQuery = new AV.Query('DateSelection');
+                dateQuery.equalTo('user', user);
+                const dateSelection = await dateQuery.first();
+
+                if (dateSelection) {
+                    // 如果有永久日期记录，直接显示最终状态
+                    const chosenDate = dateSelection.get('chosenDate');
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'backpack-item';
-                    if (prizeInSession === '神秘大奖' && dayInSession) {
-                        const year = new Date().getFullYear();
-                        itemDiv.innerHTML = `<div class="backpack-item-header"><span class="backpack-item-name">【Mystery Day】</span></div><div class="backpack-item-details"><h4>如何使用：</h4><p>请您将中奖截图保存，在您选择的日期当天早晨7:00，务必准时到达【西土城】地铁站，会有相关人员来接应你，然后享受【Mystery Day】！</p><h4>我需要提前准备什么：</h4><p>活动将在晚上结束，请您凭感觉准备体验【Mystery Day】需要带的东西。</p><h4>什么是【Mystery Day】：</h4><p>不要问了，问破喉咙也不会有人告诉你的。</p><p><strong>您选择的日期是：${year}年${dayInSession}</strong></p></div>`;
-                    } else if (prizeInSession === '神秘大奖') {
-                        itemDiv.innerHTML = `<div class="backpack-item-header"><span class="backpack-item-name">${prizeInSession}</span><button class="btn btn-primary redeem-btn">兑换</button></div>`;
-                        itemDiv.querySelector('.redeem-btn').onclick = () => {
-                            closeModal(backpackModal);
-                            openModal(redeemModal);
-                        };
-                    }
+                    itemDiv.innerHTML = `<div class="backpack-item-header"><span class="backpack-item-name">【Mystery Day】</span></div><div class="backpack-item-details"><h4>如何使用：</h4><p>请您将中奖截图保存，在您选择的日期当天早晨7:00，务必准时到达【西土城】地铁站，会有相关人员来接应你，然后享受【Mystery Day】！</p><h4>我需要提前准备什么：</h4><p>活动将在晚上结束，请您凭感觉准备体验【Mystery Day】需要带的东西。</p><h4>什么是【Mystery Day】：</h4><p>不要问了，问破喉咙也不会有人告诉你的。</p><p><strong>您选择的日期是：${chosenDate}</strong></p></div>`;
+                    backpackList.appendChild(itemDiv);
+                } else if (prizeInSession === '神秘大奖') {
+                    // 如果没有日期记录，但本次中奖了，显示兑换按钮
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'backpack-item';
+                    itemDiv.innerHTML = `<div class="backpack-item-header"><span class="backpack-item-name">${prizeInSession}</span><button class="btn btn-primary redeem-btn">兑换</button></div>`;
+                    itemDiv.querySelector('.redeem-btn').onclick = () => {
+                        closeModal(backpackModal);
+                        openModal(redeemModal);
+                    };
                     backpackList.appendChild(itemDiv);
                 } else {
-                     backpackList.innerHTML = '<p>你的背包空空如也~</p>';
+                    backpackList.innerHTML = '<p>你的背包空空如也~</p>';
                 }
                 openModal(backpackModal);
             });
@@ -263,12 +263,13 @@
                 const user = AV.User.current();
                 if (!user) { alert('请先登录'); return; }
 
-                sessionStorage.setItem('chosenDay', selectedDate);
                 const year = new Date().getFullYear();
                 const fullDate = `${year}年${selectedDate}`;
+                sessionStorage.setItem('chosenDay', fullDate);
 
                 const DateSelection = AV.Object.extend('DateSelection');
                 const selection = new DateSelection();
+                selection.set('user', user);
                 selection.set('username', user.get('username'));
                 selection.set('chosenDate', fullDate);
                 
