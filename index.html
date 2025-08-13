@@ -52,39 +52,11 @@
         .action-buttons .btn-secondary { background-color: #ccc; color: #333; }
         .action-buttons .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         
-        /* ✨ [最终修复] 抽奖盒样式 */
-        .lottery-box-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .lottery-box {
-            width: 120px;
-            height: 80px;
-            border: 2px solid var(--wood-brown);
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 700;
-            background-color: white;
-            transition: all 0.2s ease;
-        }
-        .lottery-box.active {
-            background-color: var(--sunshine-yellow);
-            transform: scale(1.1);
-            box-shadow: 0 0 15px var(--sunshine-yellow);
-        }
-        #start-lottery-btn {
-            display: block;
-            margin: 20px auto 0;
-            padding: 12px 30px;
-            font-size: 1rem;
-        }
-
-        #spin-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        .lottery-box-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; }
+        .lottery-box { width: 120px; height: 80px; border: 2px solid var(--wood-brown); border-radius: 10px; display: flex; justify-content: center; align-items: center; font-weight: 700; background-color: white; transition: all 0.2s ease; }
+        .lottery-box.active { background-color: var(--sunshine-yellow); transform: scale(1.1); box-shadow: 0 0 15px var(--sunshine-yellow); }
+        #start-lottery-btn { display: block; margin: 20px auto 0; padding: 12px 30px; font-size: 1rem; }
+        #start-lottery-btn:disabled { background-color: #ccc; cursor: not-allowed; }
         
         .backpack-item { background-color: #fff; padding: 15px; border-radius: 10px; margin-bottom: 10px; text-align: left; }
         .backpack-item-header { display: flex; justify-content: space-between; align-items: center; }
@@ -121,19 +93,12 @@
     <div id="login-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>回到草原</h2><form id="login-form"><div class="form-group"><label>用户名</label><input type="text" id="login-username"></div><div class="form-group"><label>密码</label><input type="password" id="login-password"></div><button type="submit" class="form-submit-btn">登录</button></form></div></div>
     <div id="lottery-prompt-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>惊喜抽奖</h2><p>草原伙伴为您准备了一份抽奖大礼，您要试试看吗？</p><div class="action-buttons"><button id="lottery-confirm-btn" class="btn btn-primary">确认</button><button id="lottery-decline-btn" class="btn btn-secondary">不想凑热闹</button></div></div></div>
     
-    <div id="lottery-wheel-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="modal-close-btn">&times;</span>
-            <h2>幸运抽奖盒</h2>
-            <div id="lottery-box-container" class="lottery-box-container">
-                </div>
-            <button id="start-lottery-btn" class="btn btn-primary">开始抽奖</button>
-        </div>
-    </div>
+    <div id="lottery-wheel-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>幸运抽奖盒</h2><div id="lottery-box-container" class="lottery-box-container"></div><button id="start-lottery-btn" class="btn btn-primary">开始抽奖</button></div></div>
 
     <div id="prize-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>恭喜中奖！</h2><p>您获得了：<strong id="prize-name" style="font-size:1.5em; color: var(--wood-brown);"></strong></p><p>奖品已放置您的个人背包里！</p></div></div>
     <div id="backpack-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>个人背包</h2><div id="backpack-list"></div></div></div>
-    <div id="redeem-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>神秘大奖揭晓！</h2><p>恭喜您，您的神秘大奖是【Mystery Day】！</p><hr><div style="text-align: left; margin-top: 20px;"><h4>如何使用：</h4><p>请在以下几天选择一天，由于mystery性质，我们无法透露您当天要做什么，您在选择日期之后，请在该日期当天早晨7点准时到达【西土城】地铁站，享受【Mystery Day】！</p><h4>我需要提前准备什么：</h4><p>请您凭感觉准备【Mystery Day】需要带的东西，活动将在夜晚结束，请您自行评估。</p></div><div id="date-selection-container" class="date-selection"><h4>日期选择：</h4><button data-day="8月25日" class="btn btn-secondary">8月25日</button><button data-day="8月26日" class="btn btn-secondary">8月26日</button><button data-day="8月27日" class="btn btn-secondary">8月27日</button><button data-day="8月28日" class="btn btn-secondary">8月28日</button></div><button id="final-confirm-btn" class="form-submit-btn" style="margin-top: 20px;">确认选择</button></div></div>
+    
+    <div id="redeem-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close-btn">&times;</span><h2>神秘大奖揭晓！</h2><p>恭喜您，您的神秘大奖是【Mystery Day】！</p><hr><div style="text-align: left; margin-top: 20px;"><h4>如何使用：</h4><p>请您将中奖截图保存，在您选择的日期当天早晨7:00，务必准时到达【西土城】地铁站，会有相关人员来接应你，然后享受【Mystery Day】！</p><h4>我需要提前准备什么：</h4><p>活动将在晚上结束，请您凭感觉准备体验【Mystery Day】需要带的东西。</p><h4>什么是【Mystery Day】：</h4><p>不要问了，问破喉咙也不会有人告诉你的。</p></div><div id="date-selection-container" class="date-selection"><h4>日期选择：</h4></div><button id="final-confirm-btn" class="form-submit-btn" style="margin-top: 20px;">确认选择</button></div></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -168,18 +133,7 @@
                     if (sessionStorage.getItem('hasSpunLottery')) {
                          specialEventSection.style.display = 'none';
                     } else {
-                        currentUser.fetch().then(latestUser => {
-                            updateNavUI(latestUser);
-                            const hasSpunOnServer = latestUser.get('hasSpunLottery');
-                            if (hasSpunOnServer) {
-                                sessionStorage.setItem('hasSpunLottery', 'true');
-                                specialEventSection.style.display = 'none';
-                            } else {
-                                calculateAndShowBirthdayEvent(latestUser);
-                            }
-                        }).catch(error => {
-                            console.error("获取最新用户信息失败:", error);
-                        });
+                         calculateAndShowBirthdayEvent(currentUser);
                     }
                 }
             };
@@ -211,18 +165,17 @@
             });
 
             loginForm.addEventListener('submit', (e) => { e.preventDefault(); const u = document.getElementById('login-username').value, p = document.getElementById('login-password').value; AV.User.logIn(u, p).then(() => { alert('登录成功!'); location.reload(); }, (err) => alert('登录失败: ' + err.message)); });
-            logoutBtn.addEventListener('click', () => { AV.User.logOut(); alert('已退出登录。'); location.reload(); });
+            logoutBtn.addEventListener('click', () => { AV.User.logOut(); sessionStorage.clear(); location.reload(); });
             postButton.addEventListener('click', () => { const user = AV.User.current(); if (!user) { alert('请先登录再发表评论哦！'); return; } const text = commentInput.value; if (!text.trim()) { alert('评论内容不能为空哦！'); return; } const Comment = AV.Object.extend('Comment'); const c = new Comment(); c.set('content', text); c.set('authorName', user.get('username')); c.set('authorAvatar', user.get('avatar')); c.save().then(() => { commentInput.value = ''; loadComments(); }); });
             eventConfirmBtn.addEventListener('click', () => { specialEventSection.style.display = 'none'; openModal(lotteryPromptModal); });
             eventDeclineBtn.addEventListener('click', () => { if(confirm('真的要错过草原伙伴们的好意吗？')){ specialEventSection.style.display = 'none'; }});
             lotteryConfirmBtn.addEventListener('click', () => { closeModal(lotteryPromptModal); openModal(lotteryWheelModal); });
             lotteryDeclineBtn.addEventListener('click', () => closeModal(lotteryPromptModal));
             
-            // ✨ [最终修复] 抽奖盒核心逻辑
             startLotteryBtn.addEventListener('click', () => {
                 startLotteryBtn.disabled = true;
                 const boxes = document.querySelectorAll('.lottery-box');
-                const targetIndex = 4; // 神秘大奖是第5个，索引为4
+                const targetIndex = 4;
                 let currentIndex = 0;
                 let loops = 0;
                 const totalLoops = 3; 
@@ -234,10 +187,8 @@
                     if (loops >= totalLoops && currentIndex === targetIndex) {
                         clearInterval(interval);
                         setTimeout(() => {
-                            // 绕过后端保存，直接在浏览器里做标记
                             sessionStorage.setItem('hasWonPrize', '神秘大奖');
                             sessionStorage.setItem('hasSpunLottery', 'true');
-
                             document.getElementById('prize-name').textContent = '神秘大奖';
                             closeModal(lotteryWheelModal);
                             openModal(prizeModal);
@@ -252,11 +203,7 @@
                 }, 150);
             });
 
-            // ✨ [最终修复] 背包逻辑，优先读取浏览器临时存储
             backpackBtn.addEventListener('click', () => {
-                const user = AV.User.current();
-                if (!user) { alert('请先登录哦！'); return; }
-                
                 const prizeInSession = sessionStorage.getItem('hasWonPrize');
                 const dayInSession = sessionStorage.getItem('chosenDay');
                 
@@ -266,7 +213,8 @@
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'backpack-item';
                     if (prizeInSession === '神秘大奖' && dayInSession) {
-                        itemDiv.innerHTML = `<div class="backpack-item-header"><span class="backpack-item-name">【Mystery Day】</span></div><div class="backpack-item-details"><h4>如何使用：</h4><p>请在该日期当天早晨7点准时到达【西土城】地铁站，享受【Mystery Day】！</p><h4>我需要提前准备什么：</h4><p>请您凭感觉准备【Mystery Day】需要带的东西，活动将在夜晚结束，请您自行评估。</p><p><strong>您选择的日期是：${dayInSession}</strong></p></div>`;
+                        const year = new Date().getFullYear();
+                        itemDiv.innerHTML = `<div class="backpack-item-header"><span class="backpack-item-name">【Mystery Day】</span></div><div class="backpack-item-details"><h4>如何使用：</h4><p>请您将中奖截图保存，在您选择的日期当天早晨7:00，务必准时到达【西土城】地铁站，会有相关人员来接应你，然后享受【Mystery Day】！</p><h4>我需要提前准备什么：</h4><p>活动将在晚上结束，请您凭感觉准备体验【Mystery Day】需要带的东西。</p><h4>什么是【Mystery Day】：</h4><p>不要问了，问破喉咙也不会有人告诉你的。</p><p><strong>您选择的日期是：${year}年${dayInSession}</strong></p></div>`;
                     } else if (prizeInSession === '神秘大奖') {
                         itemDiv.innerHTML = `<div class="backpack-item-header"><span class="backpack-item-name">${prizeInSession}</span><button class="btn btn-primary redeem-btn">兑换</button></div>`;
                         itemDiv.querySelector('.redeem-btn').onclick = () => {
@@ -283,18 +231,31 @@
 
             dateSelectionContainer.addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { dateSelectionContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('selected')); e.target.classList.add('selected'); selectedDate = e.target.dataset.day; } });
             
-            // ✨ [最终修复] 确认日期按钮，只做前端效果
             finalConfirmBtn.addEventListener('click', () => {
                 if (!selectedDate) { alert('请先选择一个日期哦！'); return; }
-                // 绕过后端保存，直接在浏览器里做标记
+                const user = AV.User.current();
+                if (!user) { alert('请先登录'); return; }
+
                 sessionStorage.setItem('chosenDay', selectedDate);
-                alert(`选择成功！您的【Mystery Day】是 ${selectedDate}，请准时赴约！`);
-                closeModal(redeemModal);
+
+                const DateSelection = AV.Object.extend('DateSelection');
+                const selection = new DateSelection();
+                selection.set('username', user.get('username'));
+                selection.set('chosenDate', new Date().getFullYear() + '年' + selectedDate);
+                
+                selection.save().then(() => {
+                    console.log('日期选择成功保存到后台！');
+                    alert(`选择成功！您的【Mystery Day】是 ${selectedDate}，请准时赴约！`);
+                    closeModal(redeemModal);
+                }).catch(error => {
+                    console.error('【曲线救国失败】日期保存到后台失败:', error);
+                    alert(`选择成功！您的【Mystery Day】是 ${selectedDate}，请准时赴约！（注意：您的选择可能未成功同步，请务必截图保存）`);
+                    closeModal(redeemModal);
+                });
             });
             
             const populateBirthdaySelects = () => { const y = document.getElementById('reg-birth-year'), m = document.getElementById('reg-birth-month'), d = document.getElementById('reg-birth-day'), cY = new Date().getFullYear(); for (let i = cY; i >= 1950; i--) { const o=document.createElement('option'); o.value=i; o.textContent=i+'年'; y.appendChild(o); } for (let i = 1; i <= 12; i++) { const o=document.createElement('option'); o.value=i; o.textContent=i+'月'; m.appendChild(o); } for (let i = 1; i <= 31; i++) { const o=document.createElement('option'); o.value=i; o.textContent=i+'日'; d.appendChild(o); } };
             
-            // ✨ [最终修复] 创建抽奖盒的函数
             const setupLotteryBoxes = () => {
                 const prizes = ["平果手机", "abibas运动鞋", "汪汪大礼包", "任天唐游戏机", "神秘大奖"];
                 lotteryBoxContainer.innerHTML = '';
@@ -303,6 +264,17 @@
                     box.className = 'lottery-box';
                     box.textContent = prize;
                     lotteryBoxContainer.appendChild(box);
+                });
+                
+                // ✨ [最终修复] 动态生成日期按钮
+                const dates = ["8月25日", "8月26日", "8月27日", "8月28日"];
+                dateSelectionContainer.innerHTML = '<h4>日期选择：</h4>'; // 清空并重置标题
+                dates.forEach(date => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-secondary';
+                    btn.dataset.day = date;
+                    btn.textContent = date;
+                    dateSelectionContainer.appendChild(btn);
                 });
             };
             
