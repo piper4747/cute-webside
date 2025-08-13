@@ -125,15 +125,27 @@
             const loadComments = () => { commentList.innerHTML = '<p>正在加载评论...</p>'; const query = new AV.Query('Comment'); query.descending('createdAt'); query.find().then((comments) => { commentList.innerHTML = ''; if (comments.length === 0) { commentList.innerHTML = '<p>还没有人留下足迹哦~</p>'; return; } comments.forEach((c) => { const div = document.createElement('div'); div.className = 'comment'; div.innerHTML = `<img src="${c.get('authorAvatar') || 'https://i.pravatar.cc/150?u=guest'}" class="comment-avatar"><div class="comment-content"><div class="comment-header"><span class="comment-author">${c.get('authorName')}</span><span class="comment-time">${formatTime(c.createdAt)}</span></div><p class="comment-text">${c.get('content')}</p></div>`; commentList.appendChild(div); }); }).catch(error => { commentList.innerHTML = '<p>评论加载失败...</p>'; }); };
             const calculateAndShowBirthdayEvent = (user) => { const b = user.get('birthday'); if (!b) return; const t = new Date(); t.setHours(0, 0, 0, 0); const bM = b.getMonth(), bD = b.getDate(); let nB = new Date(t.getFullYear(), bM, bD); if (nB < t) { nB.setFullYear(t.getFullYear() + 1); } const dD = Math.ceil((nB - t) / 864e5); document.getElementById('event-username').textContent = user.get('username'); document.getElementById('birthday-countdown').textContent = dD; specialEventSection.style.display = 'flex'; };
             
-            const initializePage = () => {
+            // ✨ [最终修复] 页面加载逻辑，增加永久性检查
+            const initializePage = async () => {
                 const currentUser = AV.User.current();
                 updateNavUI(currentUser);
                 loadComments();
+
                 if (currentUser) {
-                    if (sessionStorage.getItem('hasSpunLottery')) {
-                         specialEventSection.style.display = 'none';
+                    // 先检查服务器上是否已有参与记录
+                    const query = new AV.Query('LotteryParticipation');
+                    query.equalTo('user', currentUser);
+                    const participation = await query.first();
+
+                    if (participation) {
+                        // 如果服务器上有记录，说明永久参加过了
+                        specialEventSection.style.display = 'none';
+                        // 同时在浏览器里也做个标记
+                        sessionStorage.setItem('hasSpunLottery', 'true');
+                        sessionStorage.setItem('hasWonPrize', '神秘大奖');
                     } else {
-                         calculateAndShowBirthdayEvent(currentUser);
+                        // 服务器上没有记录，才显示生日活动
+                        calculateAndShowBirthdayEvent(currentUser);
                     }
                 }
             };
@@ -172,8 +184,12 @@
             lotteryConfirmBtn.addEventListener('click', () => { closeModal(lotteryPromptModal); openModal(lotteryWheelModal); });
             lotteryDeclineBtn.addEventListener('click', () => closeModal(lotteryPromptModal));
             
+            // ✨ [最终修复] 抽奖逻辑，增加永久性记录
             startLotteryBtn.addEventListener('click', () => {
                 startLotteryBtn.disabled = true;
+                const user = AV.User.current();
+                if (!user) { startLotteryBtn.disabled = false; return; }
+
                 const boxes = document.querySelectorAll('.lottery-box');
                 const targetIndex = 4;
                 let currentIndex = 0;
@@ -187,8 +203,19 @@
                     if (loops >= totalLoops && currentIndex === targetIndex) {
                         clearInterval(interval);
                         setTimeout(() => {
+                            // 在浏览器做临时标记
                             sessionStorage.setItem('hasWonPrize', '神秘大奖');
                             sessionStorage.setItem('hasSpunLottery', 'true');
+                            
+                            // 在后台创建永久参与记录
+                            const Participation = AV.Object.extend('LotteryParticipation');
+                            const participation = new Participation();
+                            participation.set('user', user);
+                            participation.set('username', user.get('username'));
+                            participation.save().then(() => {
+                                console.log('参与记录已永久保存！');
+                            });
+
                             document.getElementById('prize-name').textContent = '神秘大奖';
                             closeModal(lotteryWheelModal);
                             openModal(prizeModal);
@@ -237,19 +264,21 @@
                 if (!user) { alert('请先登录'); return; }
 
                 sessionStorage.setItem('chosenDay', selectedDate);
+                const year = new Date().getFullYear();
+                const fullDate = `${year}年${selectedDate}`;
 
                 const DateSelection = AV.Object.extend('DateSelection');
                 const selection = new DateSelection();
                 selection.set('username', user.get('username'));
-                selection.set('chosenDate', new Date().getFullYear() + '年' + selectedDate);
+                selection.set('chosenDate', fullDate);
                 
                 selection.save().then(() => {
                     console.log('日期选择成功保存到后台！');
-                    alert(`选择成功！您的【Mystery Day】是 ${selectedDate}，请准时赴约！`);
+                    alert(`选择成功！您的【Mystery Day】是 ${fullDate}，请准时赴约！`);
                     closeModal(redeemModal);
                 }).catch(error => {
-                    console.error('【曲线救国失败】日期保存到后台失败:', error);
-                    alert(`选择成功！您的【Mystery Day】是 ${selectedDate}，请准时赴约！（注意：您的选择可能未成功同步，请务必截图保存）`);
+                    console.error('日期保存到后台失败:', error);
+                    alert(`选择成功！您的【Mystery Day】是 ${fullDate}，请准时赴约！（注意：您的选择可能未成功同步，请务必截图保存）`);
                     closeModal(redeemModal);
                 });
             });
@@ -266,9 +295,8 @@
                     lotteryBoxContainer.appendChild(box);
                 });
                 
-                // ✨ [最终修复] 动态生成日期按钮
                 const dates = ["8月25日", "8月26日", "8月27日", "8月28日"];
-                dateSelectionContainer.innerHTML = '<h4>日期选择：</h4>'; // 清空并重置标题
+                dateSelectionContainer.innerHTML = '<h4>日期选择：</h4>';
                 dates.forEach(date => {
                     const btn = document.createElement('button');
                     btn.className = 'btn btn-secondary';
