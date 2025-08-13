@@ -51,12 +51,10 @@
         .action-buttons .btn-secondary { background-color: #ccc; color: #333; }
         .action-buttons .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         
-        /* -- 大转盘样式 -- */
         .wheel-container { width: 320px; height: 320px; position: relative; margin: 20px auto; }
         .wheel-pointer { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 30px solid #e74c3c; z-index: 10; }
         #lottery-wheel { width: 100%; height: 100%; border-radius: 50%; position: relative; overflow: hidden; border: 8px solid var(--wood-brown); transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1); background: conic-gradient( from -36deg, #fcecae 0deg 72deg, #f8c0b5 72deg 144deg, #bce2e8 144deg 216deg, #d8cdef 216deg 288deg, #b9e0a7 288deg 360deg ); }
         
-        /* ✨ [更新] 使用新的、更稳定的转盘奖品样式 */
         .prize-item {
             position: absolute;
             top: 0;
@@ -141,6 +139,7 @@
             const loadComments = () => { commentList.innerHTML = '<p>正在加载评论...</p>'; const query = new AV.Query('Comment'); query.descending('createdAt'); query.find().then((comments) => { commentList.innerHTML = ''; if (comments.length === 0) { commentList.innerHTML = '<p>还没有人留下足迹哦~</p>'; return; } comments.forEach((c) => { const div = document.createElement('div'); div.className = 'comment'; div.innerHTML = `<img src="${c.get('authorAvatar') || 'https://i.pravatar.cc/150?u=guest'}" class="comment-avatar"><div class="comment-content"><div class="comment-header"><span class="comment-author">${c.get('authorName')}</span><span class="comment-time">${formatTime(c.createdAt)}</span></div><p class="comment-text">${c.get('content')}</p></div>`; commentList.appendChild(div); }); }).catch(error => { commentList.innerHTML = '<p>评论加载失败...</p>'; }); };
             const calculateAndShowBirthdayEvent = (user) => { const b = user.get('birthday'); if (!b) return; const t = new Date(); t.setHours(0, 0, 0, 0); const bM = b.getMonth(), bD = b.getDate(); let nB = new Date(t.getFullYear(), bM, bD); if (nB < t) { nB.setFullYear(t.getFullYear() + 1); } const dD = Math.ceil((nB - t) / 864e5); document.getElementById('event-username').textContent = user.get('username'); document.getElementById('birthday-countdown').textContent = dD; specialEventSection.style.display = 'flex'; };
             
+            // ✨ [已修复] 增强页面初始化逻辑，确保正确检查抽奖状态
             const initializePage = () => {
                 const currentUser = AV.User.current();
                 updateNavUI(currentUser);
@@ -170,6 +169,7 @@
                 }
             };
 
+            // ✨ [已修复] 替换整个注册表单的提交事件监听器
             registerForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const u = document.getElementById('reg-username').value.trim();
@@ -190,10 +190,13 @@
                 user.set('birthday', b);
                 user.set('avatar', a);
 
+                // --- 新增ACL权限设置 ---
                 const acl = new AV.ACL();
                 acl.setPublicReadAccess(true);
                 acl.setWriteAccess(user, true);
+                // 明确地授予用户本人读取自己信息的权限
                 acl.setReadAccess(user, true); 
+                // --- 结束ACL设置 ---
                 
                 user.setACL(acl);
 
