@@ -181,13 +181,6 @@
                 user.set('birthday', b);
                 user.set('avatar', a);
 
-                const acl = new AV.ACL();
-                acl.setPublicReadAccess(true);
-                acl.setWriteAccess(user, true);
-                acl.setReadAccess(user, true); 
-                
-                user.setACL(acl);
-
                 user.signUp().then(() => {
                     alert('注册成功!');
                     location.reload();
