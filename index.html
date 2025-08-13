@@ -1,5 +1,4 @@
-<html lang="zh-CN">
-<head>
+<html lang="zh-CN"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>草原世界</title>
@@ -52,23 +51,30 @@
         .action-buttons .btn-secondary { background-color: #ccc; color: #333; }
         .action-buttons .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         
-        /* -- ✨ [修改] 大转盘样式 -- */
+        /* -- 大转盘样式 -- */
         .wheel-container { width: 320px; height: 320px; position: relative; margin: 20px auto; }
         .wheel-pointer { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 30px solid #e74c3c; z-index: 10; }
         #lottery-wheel { width: 100%; height: 100%; border-radius: 50%; position: relative; overflow: hidden; border: 8px solid var(--wood-brown); transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1); background: conic-gradient( from -36deg, #fcecae 0deg 72deg, #f8c0b5 72deg 144deg, #bce2e8 144deg 216deg, #d8cdef 216deg 288deg, #b9e0a7 288deg 360deg ); }
-        /* -- ✨ [修改] 奖品文字的样式 -- */
+        
+        /* ✨ [更新] 使用新的、更稳定的转盘奖品样式 */
         .prize-item {
             position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .prize-text {
+            position: absolute;
+            /* 让文字的逻辑起点在转盘中心偏右一点的位置，方便旋转 */
+            left: 60%; 
             top: 50%;
-            left: 50%;
-            /* 将旋转中心设置为转盘的中心 */
-            transform-origin: -95px center; 
-            margin-top: -10px; /* 根据字体大小微调垂直居中 */
+            margin-top: -10px; /* 根据字体大小垂直居中 */
             font-weight: 700;
             font-size: 14px;
             color: #333;
-            /* JS会设置transform来定位和旋转 */
         }
+
         #spin-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; border-radius: 50%; background: var(--wood-brown); color: white; border: 5px solid white; font-size: 1.2rem; font-weight: 700; z-index: 10; cursor: pointer; display: flex; justify-content: center; align-items: center; }
         #spin-btn:disabled { background-color: #ccc; cursor: not-allowed; }
         
@@ -81,9 +87,7 @@
         .backpack-item-details strong { color: var(--wood-brown); }
         .date-selection button { margin: 5px; }
         .date-selection button.selected { background-color: var(--wood-brown); color: white; border-color: var(--wood-brown); }
-    </style>
-</head>
-<body>
+    </style></head><body>
     <header>
         <div class="logo">草原世界</div>
         <div class="nav-right">
@@ -122,7 +126,6 @@
             });
 
             // --- 全局元素获取 ---
-            // ✨ [修改] 添加 lotteryDeclineBtn
             const authContainer = document.getElementById('auth-container'), userInfoContainer = document.getElementById('user-info-container'), greetingSpan = document.querySelector('.user-info .greeting'), logoutBtn = document.getElementById('logout-btn'), registerForm = document.getElementById('register-form'), loginForm = document.getElementById('login-form'), specialEventSection = document.getElementById('special-event-section'), eventConfirmBtn = document.getElementById('event-confirm-btn'), eventDeclineBtn = document.getElementById('event-decline-btn'), commentInput = document.getElementById('comment-input'), postButton = document.getElementById('post-comment-btn'), commentList = document.getElementById('comment-list'), backpackBtn = document.getElementById('backpack-btn'), backpackModal = document.getElementById('backpack-modal'), backpackList = document.getElementById('backpack-list'), redeemModal = document.getElementById('redeem-modal'), dateSelectionContainer = document.getElementById('date-selection-container'), finalConfirmBtn = document.getElementById('final-confirm-btn'), lotteryConfirmBtn = document.getElementById('lottery-confirm-btn'), lotteryDeclineBtn = document.getElementById('lottery-decline-btn'), lotteryWheelModal = document.getElementById('lottery-wheel-modal'), spinBtn = document.getElementById('spin-btn'), lotteryWheel = document.getElementById('lottery-wheel'), prizeModal = document.getElementById('prize-modal'), registerBtn = document.getElementById('register-btn'), loginBtn = document.getElementById('login-btn'), lotteryPromptModal = document.getElementById('lottery-prompt-modal');
             let selectedDate = null;
 
@@ -141,45 +144,111 @@
             const formatTime = (date) => { const now = new Date(); const diff = now - date; const minutes = Math.floor(diff / 60000); if (minutes < 1) return '刚刚'; if (minutes < 60) return `${minutes}分钟前`; const hours = Math.floor(minutes / 60); if (hours < 24) return `${hours}小时前`; return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`; };
             const loadComments = () => { commentList.innerHTML = '<p>正在加载评论...</p>'; const query = new AV.Query('Comment'); query.descending('createdAt'); query.find().then((comments) => { commentList.innerHTML = ''; if (comments.length === 0) { commentList.innerHTML = '<p>还没有人留下足迹哦~</p>'; return; } comments.forEach((c) => { const div = document.createElement('div'); div.className = 'comment'; div.innerHTML = `<img src="${c.get('authorAvatar') || 'https://i.pravatar.cc/150?u=guest'}" class="comment-avatar"><div class="comment-content"><div class="comment-header"><span class="comment-author">${c.get('authorName')}</span><span class="comment-time">${formatTime(c.createdAt)}</span></div><p class="comment-text">${c.get('content')}</p></div>`; commentList.appendChild(div); }); }).catch(error => { commentList.innerHTML = '<p>评论加载失败...</p>'; }); };
             const calculateAndShowBirthdayEvent = (user) => { const b = user.get('birthday'); if (!b) return; const t = new Date(); t.setHours(0, 0, 0, 0); const bM = b.getMonth(), bD = b.getDate(); let nB = new Date(t.getFullYear(), bM, bD); if (nB < t) { nB.setFullYear(t.getFullYear() + 1); } const dD = Math.ceil((nB - t) / 864e5); document.getElementById('event-username').textContent = user.get('username'); document.getElementById('birthday-countdown').textContent = dD; specialEventSection.style.display = 'flex'; };
-            const initializePage = () => { const currentUser = AV.User.current(); updateNavUI(currentUser); loadComments(); if (currentUser) { currentUser.fetch().then(latestUser => { updateNavUI(latestUser); if (latestUser.get('hasSpunLottery')) { specialEventSection.style.display = 'none'; } else { calculateAndShowBirthdayEvent(latestUser); } }).catch(error => console.error("获取最新用户信息失败:", error)); } };
+            
+            // ✨ [更新] 增强页面初始化逻辑，确保正确检查抽奖状态
+            const initializePage = () => {
+                const currentUser = AV.User.current();
+                updateNavUI(currentUser);
+                loadComments();
+
+                if (currentUser) {
+                    console.log("用户已登录，正在从服务器获取最新信息...");
+                    // currentUser.fetch() 会强制从服务器拉取最新的用户数据
+                    currentUser.fetch().then(latestUser => {
+                        updateNavUI(latestUser); // 使用最新数据更新UI
+                        
+                        const hasSpun = latestUser.get('hasSpunLottery');
+                        console.log("检查用户是否已抽奖 (hasSpunLottery):", hasSpun);
+
+                        // 核心逻辑：如果 hasSpunLottery 字段为 true，则不显示任何活动
+                        if (hasSpun) {
+                            console.log("用户已参与过抽奖，隐藏特殊活动入口。");
+                            specialEventSection.style.display = 'none';
+                        } else {
+                            console.log("用户尚未抽奖，检查是否显示生日活动。");
+                            // 只有在用户没抽过奖的情况下，才去计算和显示生日活动
+                            calculateAndShowBirthdayEvent(latestUser);
+                        }
+                    }).catch(error => {
+                        console.error("获取最新用户信息失败:", error);
+                        // 即使获取失败，也最好隐藏活动，避免出错
+                        specialEventSection.style.display = 'none';
+                    });
+                } else {
+                    console.log("用户未登录。");
+                }
+            };
 
             // --- 事件监听器 ---
-            registerForm.addEventListener('submit', (e) => { e.preventDefault(); const u = document.getElementById('reg-username').value.trim(), p = document.getElementById('reg-password').value.trim(), a = document.getElementById('reg-avatar').value.trim(); if (!u || !p || !a) { alert('所有信息均为必填项！'); return; } const y = document.getElementById('reg-birth-year').value, m = document.getElementById('reg-birth-month').value, d = document.getElementById('reg-birth-day').value, b = new Date(y, m - 1, d); const user = new AV.User(); user.setUsername(u); user.setPassword(p); user.set('birthday', b); user.set('avatar', a); user.signUp().then(() => { alert('注册成功!'); location.reload(); }, (err) => alert('注册失败: ' + err.message)); });
+            // ✨ [更新] 替换整个注册表单的提交事件监听器
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const u = document.getElementById('reg-username').value.trim();
+                const p = document.getElementById('reg-password').value.trim();
+                const a = document.getElementById('reg-avatar').value.trim();
+                if (!u || !p || !a) {
+                    alert('所有信息均为必填项！');
+                    return;
+                }
+                const y = document.getElementById('reg-birth-year').value;
+                const m = document.getElementById('reg-birth-month').value;
+                const d = document.getElementById('reg-birth-day').value;
+                const b = new Date(y, m - 1, d);
+                
+                const user = new AV.User();
+                user.setUsername(u);
+                user.setPassword(p);
+                user.set('birthday', b);
+                user.set('avatar', a);
+
+                // --- 新增ACL权限设置 ---
+                const acl = new AV.ACL();
+                acl.setPublicReadAccess(true);
+                acl.setWriteAccess(user, true); 
+                user.setACL(acl);
+
+                user.signUp().then(() => {
+                    alert('注册成功!');
+                    location.reload();
+                }, (err) => {
+                    alert('注册失败: ' + err.message);
+                    console.error('注册失败，LeanCloud错误:', err);
+                });
+            });
+
             loginForm.addEventListener('submit', (e) => { e.preventDefault(); const u = document.getElementById('login-username').value, p = document.getElementById('login-password').value; AV.User.logIn(u, p).then(() => { alert('登录成功!'); location.reload(); }, (err) => alert('登录失败: ' + err.message)); });
             logoutBtn.addEventListener('click', () => { AV.User.logOut(); alert('已退出登录。'); location.reload(); });
             postButton.addEventListener('click', () => { const user = AV.User.current(); if (!user) { alert('请先登录再发表评论哦！'); return; } const text = commentInput.value; if (!text.trim()) { alert('评论内容不能为空哦！'); return; } const Comment = AV.Object.extend('Comment'); const c = new Comment(); c.set('content', text); c.set('authorName', user.get('username')); c.set('authorAvatar', user.get('avatar')); c.save().then(() => { commentInput.value = ''; loadComments(); }); });
             eventConfirmBtn.addEventListener('click', () => { specialEventSection.style.display = 'none'; openModal(lotteryPromptModal); });
             eventDeclineBtn.addEventListener('click', () => { if(confirm('真的要错过草原伙伴们的好意吗？')){ specialEventSection.style.display = 'none'; }});
             lotteryConfirmBtn.addEventListener('click', () => { closeModal(lotteryPromptModal); openModal(lotteryWheelModal); });
-            // ✨ [新增] 为“不想凑热闹”按钮添加关闭弹窗的事件
             lotteryDeclineBtn.addEventListener('click', () => closeModal(lotteryPromptModal));
 
-            // ✨ [修改] 抽奖按钮点击事件
+            // ✨ [更新] 在抽奖按钮事件中添加日志
             spinBtn.addEventListener('click', () => {
                 const user = AV.User.current();
                 if (!user) return;
                 spinBtn.disabled = true;
 
-                // 计算旋转角度以固定停在“神秘大奖”
-                // 神秘大奖(index=4)的中心角度是288度，指针在270度
-                // 需要旋转的角度 = 5个整圈 - 18度
                 const angle = (360 * 5) - 18; 
                 lotteryWheel.style.transform = `rotate(${angle}deg)`;
 
                 setTimeout(() => {
-                    user.set('hasSpunLottery', true);
+                    console.log("抽奖动画结束，正在将 'hasSpunLottery: true' 保存到服务器...");
+                    user.set('hasSpunLottery', true); 
                     user.addUnique('backpackItems', '神秘大奖');
-                    user.save().then(() => {
+                    
+                    user.save().then((savedUser) => {
+                        console.log("用户状态保存成功！", savedUser.toJSON());
                         document.getElementById('prize-name').textContent = '神秘大奖';
                         closeModal(lotteryWheelModal);
                         openModal(prizeModal);
-                        console.log('用户状态已保存');
                     }).catch(err => {
                         alert('保存抽奖结果失败，请重试');
-                        console.error(err);
+                        console.error("保存用户抽奖状态失败:", err);
                         spinBtn.disabled = false;
                     });
-                }, 5500); // 等待动画结束
+                }, 5500);
             });
 
             backpackBtn.addEventListener('click', () => { const user = AV.User.current(); if (!user) { alert('请先登录哦！'); return; } user.fetch().then(latestUser => { const items = latestUser.get('backpackItems') || []; const chosenDay = latestUser.get('day'); backpackList.innerHTML = ''; if (items.length === 0) { backpackList.innerHTML = '<p>你的背包空空如也~</p>'; } else { items.forEach(itemName => { const itemDiv = document.createElement('div'); itemDiv.className = 'backpack-item'; if (itemName === '神秘大奖' && chosenDay) { itemDiv.innerHTML = `<div class="backpack-item-header"><span class="backpack-item-name">【Mystery Day】</span></div><div class="backpack-item-details"><h4>如何使用：</h4><p>请在该日期当天早晨7点准时到达【西土城】地铁站，享受【Mystery Day】！</p><h4>我需要提前准备什么：</h4><p>请您凭感觉准备【Mystery Day】需要带的东西，活动将在夜晚结束，请您自行评估。</p><p><strong>您选择的日期是：${chosenDay}</strong></p></div>`; } else if (itemName === '神秘大奖') { itemDiv.innerHTML = `<div class="backpack-item-header"><span class="backpack-item-name">${itemName}</span><button class="btn btn-primary redeem-btn">兑换</button></div>`; itemDiv.querySelector('.redeem-btn').onclick = () => { closeModal(backpackModal); openModal(redeemModal); }; } else { itemDiv.innerHTML = `<span class="backpack-item-name">${itemName}</span>`; } backpackList.appendChild(itemDiv); }); } openModal(backpackModal); }); });
@@ -189,37 +258,33 @@
             // --- 初始化函数 ---
             const populateBirthdaySelects = () => { const y = document.getElementById('reg-birth-year'), m = document.getElementById('reg-birth-month'), d = document.getElementById('reg-birth-day'), cY = new Date().getFullYear(); for (let i = cY; i >= 1950; i--) { const o=document.createElement('option'); o.value=i; o.textContent=i+'年'; y.appendChild(o); } for (let i = 1; i <= 12; i++) { const o=document.createElement('option'); o.value=i; o.textContent=i+'月'; m.appendChild(o); } for (let i = 1; i <= 31; i++) { const o=document.createElement('option'); o.value=i; o.textContent=i+'日'; d.appendChild(o); } };
             
-            // ✨ [修改] 重写转盘设置函数
+            // ✨ [更新] 重写转盘设置函数，修复奖品数量和位置问题
             const setupLotteryWheel = () => {
                 const prizes = ["平果手机", "abibas运动鞋", "汪汪大礼包", "任天唐游戏机", "神秘大奖"];
                 const wheel = document.getElementById('lottery-wheel');
-                wheel.innerHTML = '';
-                const angleStep = 360 / prizes.length; // 72deg
-
-                // conic-gradient的from使得第一个扇区的中心点在0度
-                const gradientOffset = -36;
+                wheel.innerHTML = ''; // 清空旧内容
+                const angleStep = 360 / prizes.length; // 每个奖品的角度 = 72度
 
                 prizes.forEach((prize, index) => {
-                    const prizeDiv = document.createElement('div');
-                    prizeDiv.className = 'prize-item';
-                    prizeDiv.textContent = prize;
+                    const itemContainer = document.createElement('div');
+                    itemContainer.className = 'prize-item'; 
 
-                    // 计算每个奖品文字的中心角度
-                    const textAngle = (index * angleStep) + (angleStep / 2) + gradientOffset;
+                    const textElement = document.createElement('div');
+                    textElement.className = 'prize-text';
+                    textElement.textContent = prize;
                     
-                    // 通过 transform 定位文字
-                    // 1. rotate(textAngle) - 把文字“指针”指向正确方向
-                    // 2. translateX(95px) - 把文字从中心推到外圈
-                    // 3. rotate(-textAngle) - 把文字本身转回水平
-                    let finalTransform = `rotate(${textAngle}deg) translateX(95px) rotate(${-textAngle}deg)`;
+                    const centerAngle = index * angleStep;
 
-                    // 如果文字在转盘左侧 (90~270度)，则再旋转180度使其保持正向
-                    if (textAngle > 90 && textAngle < 270) {
-                        finalTransform = `rotate(${textAngle}deg) translateX(95px) rotate(${-textAngle + 180}deg)`;
+                    itemContainer.style.transform = `rotate(${centerAngle}deg)`;
+
+                    let textRotation = -centerAngle;
+                    if (centerAngle > 90 && centerAngle < 270) {
+                        textRotation += 180;
                     }
-                    
-                    prizeDiv.style.transform = finalTransform;
-                    wheel.appendChild(prizeDiv);
+                    textElement.style.transform = `rotate(${textRotation}deg)`;
+
+                    itemContainer.appendChild(textElement);
+                    wheel.appendChild(itemContainer);
                 });
             };
             
@@ -227,6 +292,4 @@
             setupLotteryWheel();
             initializePage();
         });
-    </script>
-</body>
-</html>
+    </script></body></html>
